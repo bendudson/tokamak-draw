@@ -1,0 +1,59 @@
+# Example model definition
+# 
+# Syntax: 
+#  name <decription>   (optional)
+#  <Default settings>
+#
+#  <item>
+#     <settings>
+#  <item>
+#     <settings>
+#    ...
+#
+# Settings can be any of
+#   ALPHA <number> Transparency
+#   COLOR <name or 3 numbers between 0 and 1> 
+#      e.g. "COLOR blue" or "COLOR 0.0 0.0 1.0"
+#   ELONGATION <number>
+#   MAJOR <number>   - Major radius
+#   MINOR <number>   - Minor radius
+#   NUMBER <integer>  Number of field-lines, or resolution
+#   PITCH <integer m> <integer n> Field-line pitch
+#   RANGE <start and end angles>
+#      e.g. "RANGE 0 90"
+#   TRIANGULARITY <number> 
+#   
+# These can be abbreviated so long as they're not ambiguous
+# so you could use "C", "E", "MA", "MI", "N", "P", "R", "T"
+# but that's not recommended for clarity
+#
+# Numbers can be specified either as an absolute value,
+# or relative to the defaults. e.g. You could specify
+# "ELONGATION 0.2" to set to 0.2, or "+0.1" to set to
+# the default value + 0.1.
+#
+# NOTE: Not case sensitive, indentation optional, and
+#       hash starts a comment.
+#
+
+NAME Example model
+
+# Default settings here before any items
+MAJOR 3.0
+MINOR 1.0
+ELONGATION 0.1
+TRIANGULARITY 0.5
+
+SOLID
+	MINOR +0.1
+	COLOR red   # Either a name, or R,G,B
+	ELONGATION +0.1
+	RANGE 0 180  # Range of angle (degrees)
+LINES
+	MINOR +0.2
+	NUMBER 10 
+	PITCH 1 3    # Specify m n numbers
+
+PLANES
+	NUMBER 5
+	MINOR +0.5
