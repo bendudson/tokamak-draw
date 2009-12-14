@@ -730,9 +730,11 @@ void keyboard (unsigned char key, int x, int y)
     break;
   }
   case 'z':
+  case '+':
     move_camera(-0.1, 0.0, 0.0); /* Zoom in */
     break;
   case 'x':
+  case '-':
     move_camera(0.1,  0.0, 0.0); /* Zoom out */
     break;
   case 'b': {
