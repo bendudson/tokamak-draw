@@ -298,102 +298,47 @@ void draw_surface(int n, int m, float major, float minor, int M, float mode)
   
 }
 
-/************************* DEPTH-SORTING RENDER ******************/
+/************************* MAIN DRAWING ROUTINE ******************
+ *
+ * Define models as combination of surfaces and field-lines
+ * NOTE: Currently no depth-sorting of transparent surfaces, so
+ * won't look quite right.
+ *****************************************************************/
 
-/* Draw a field-line, starting at toroidal angle theta0, poloidal phi0
-   with pitch q and minor radius r using N segments */
+enum DrawType {DRAW_LINE, DRAW_SOLID, DRAW_PLANES};
 
-/*
 typedef struct {
-
-}TLine;
-
-typedef struct {
+  enum DrawType type; 
   
-}TQuad;
-
-typdef struct {
-  float x, y, z; // centre of the primitive
-  float depth;
-
+  float major_radius;
+  float minor_radius;
+  float elongation; 
+  float triangularity;
+  
+  int N;
   TColor color;
-
-  int type;    // 0 - line, 1 - quad
   
-  union {
-    TLine line;
-    TQuad quad;
-  }
-}TPrimitive;
+  int m, n;         /* Only used for field-lines */
+  float phi0, phi1; /* Only for solid surfaces */
+  
+}TModelItem;
 
 typedef struct {
-  int nprim;
-
-  TPrimitive *prim;
-
+  int nitems;
+  TModelItem *item; /* Array of items (surfaces etc.) to plot */
 }TModel;
 
-void add_line(TLine *line, TColor *color, TModel *model)
-{
-  
-}
 
-void add_quad(TQuad *quad, TColor *color, TModel *model)
-{
-  
-}
 
-void model_line(float q, float major, float minor,
-	       float *theta, float *phi,
-	       int N,
-	       TColor *color,
-	       float mode)
-{
-  int i;
-  float dtheta, dphi;
-  float r, x, y, z, mr, cp, mnr;
 
-  dtheta = 2.0*PI / ((float) N);
-  dphi = dtheta / q;
-
-  mnr = 2.0;
-
-  glBegin(GL_LINE_STRIP);
-  glColor4f(color->r, color->g, color->b, 1.0);
-  for(i=0;i<N;i++) {
-    cp = cos(0.5*(*phi)); cp *= cp;
-    mr = minor + mode*cp*cp*cp*cos(mnr*(*phi)*q - mnr*(*theta));
-
-    r = major + mr*cos(*phi);
-    x = r*cos(*theta);
-    y = r*sin(*theta);
-    z = mr*sin(*phi);
-    
-    glVertex3f(x, z, y);
-
-    *theta += dtheta;
-    *phi += dphi;
-  }
-
-  cp = cos(0.5*(*phi));
-  mr = minor + mode*cp*cp*cp*cos(mnr*(*phi)*q - mnr*(*theta));
-
-  r = major + mr*cos(*phi);
-  x = r*cos(*theta);
-  y = r*sin(*theta);
-  z = mr*sin(*phi);
-    
-  glVertex3f(x, z, y);
-  
-  glEnd();
-}
-
-*/
+TModel drawmodel; /* The model being used */
 
 /************************* MAIN DRAWING ROUTINE ******************/
 
 void display()
 {
+  int i;
+  TModelItem *item;
   float theta, phi;
   float p0, dp;
 
@@ -404,10 +349,37 @@ void display()
 
   /* Draw something here */
 
+  for(i=0;i<drawmodel.nitems;i++) {
+    item = &drawmodel.item[i];
+    switch(item->type) {
+    case DRAW_LINE: {
+      draw_shapesurf(item->major_radius, item->minor_radius,
+		     item->elongation, item->triangularity, 
+		     item->m, item->n, &item->color, item->N);
+      break;
+    };
+    case DRAW_SOLID: {
+      solid_surface( item->major_radius, item->minor_radius, 
+		     item->elongation, item->triangularity,
+		     item->N, &item->color, item->phi0, item->phi1);
+      break;
+    }
+    case DRAW_PLANES: {
+      draw_planes(item->N, item->major_radius, item->minor_radius, &item->color);
+      break;
+    }
+    default: {
+      fprintf(stderr,"ERROR: Unknown model item type. Ignoring\n");
+    }
+    };
+  }
+
   linecolor.r = 0.5;
   linecolor.g = 0.5;
   linecolor.b = 0.5;
   linecolor.alpha = 1.0;
+
+
 
   //void draw_shapesurf(float R, float a, float e, float k, int m, int n, TColor *color, int N);
   
@@ -545,6 +517,9 @@ int main(int argc, char **argv)
   planecolor.g = 0.2;
   planecolor.b = 0.2;
   planecolor.alpha = 0.8;
+
+  /* Clear the model */
+  drawmodel.nitems = 0;
 
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
@@ -716,6 +691,7 @@ void keyboard (unsigned char key, int x, int y)
 
   switch(key) {
   case 27: /* Escape key */
+  case 'q':
     exit(0);
     break;
   case 'c': {
