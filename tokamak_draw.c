@@ -26,6 +26,7 @@ int win_width, win_height;
 TColor planecolor, linecolor;
 
 TModel drawmodel; /* The model being used */
+char modelfile[256]; /* Filename for the model */
 
 /*********** PROTOTYPES ****************/
 
@@ -349,9 +350,6 @@ void init()
 
 }
 
-
-
-
 int main(int argc, char **argv)
 {
   /* Create the camera */
@@ -364,8 +362,13 @@ int main(int argc, char **argv)
 
   /* Clear the model */
   drawmodel.nitems = 0;
-
-  model_load(&drawmodel, "example.def");
+  
+  if(argc > 1) {
+    /* First argument is a model to load */
+    strncpy(modelfile, argv[1], 255);
+  }else 
+    strncpy(modelfile, "example.def", 255);
+  model_load(&drawmodel, modelfile);
 
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
@@ -586,6 +589,7 @@ void keyboard (unsigned char key, int x, int y)
       transparency = 0;
       printf("Transparency disabled\n");
     }
+    display(); /* re-draw */
     break;
   }
   case 'f': { // Change output format
@@ -630,8 +634,20 @@ void keyboard (unsigned char key, int x, int y)
     gl2psEndPage();
 
     printf("Done!\n");
-   fflush(stdout);
+    fflush(stdout);
 
+    break;
+  }
+  case 'l': {
+    printf("Model file name to load: ");
+    fgets(modelfile, 255, stdin);
+    modelfile[255] = '\0';
+    /* Need to strip final line return */
+    modelfile[strlen(modelfile)-1] = '\0';
+  }
+  case 'r': {
+    model_free(&drawmodel);
+    model_load(&drawmodel, modelfile);
     break;
   }
   case '?':
@@ -641,14 +657,16 @@ void keyboard (unsigned char key, int x, int y)
     printf("  F1       - arrow keys rotate object\n");
     printf("  F2       - arrow keys move focus\n");
     printf("  ESC or q - exit\n");
+    printf("  a        - enable/disable transparency\n");
+    printf("  b        - flip background color\n");
     printf("  c        - centre camera on origin\n");
     printf("  C        - reset camera\n");
+    printf("  f        - change output format\n");
+    printf("  l        - Load a model\n");
+    printf("  p        - print the current view to file\n");
+    printf("  r        - Reload model from file\n");
     printf("  x or -   - zoom out\n");
     printf("  z or +   - zoom in\n");
-    printf("  b        - flip background color\n");
-    printf("  a        - enable/disable transparency\n");
-    printf("  f        - change output format\n");
-    printf("  p        - print the current view to file\n\n");
     break;
   }
   };

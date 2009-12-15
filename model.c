@@ -404,4 +404,14 @@ int model_save(TModel *model, char *filename)
   return 1;
 }
 
+void model_free(TModel *model)
+{
+  if(model == NULL)
+    return;
+  
+  if(model->nitems > 0) {
+    free(model->item);
+  }
+  model->nitems = 0;
+}
 

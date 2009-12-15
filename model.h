@@ -33,4 +33,6 @@ typedef struct {
 int model_load(TModel *model, char *filename);
 int model_save(TModel *model, char *filename);
 
+void model_free(TModel *model);
+
 #endif /* __MODEL_H__ */
