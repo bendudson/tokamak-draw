@@ -176,7 +176,7 @@ void solid_surface(float R, float a, float e, float k, int N, TColor *color, flo
   ct = cos(theta);
   r2 = a*ct - b*ct*ct + R;
   z2 = a*(1.0 + e)*sin(theta);
-  for(i=0;i<=N;i++) {
+  for(i=0;i<N;i++) {
     r1 = r2;
     z1 = z2;
 
@@ -187,11 +187,11 @@ void solid_surface(float R, float a, float e, float k, int N, TColor *color, flo
     z2 = a*(1.0 + e)*sin(theta);
 
     //printf("(%f, %f) -> (%f, %f)\n", r1, z1, r2, z2);
-
+    
     glBegin(GL_QUAD_STRIP);
-    glColor4f(color->r, color->g, color->b, 1.0);
+    glColor4f(color->r, color->g, color->b, color->alpha);
     phi = 0.0;
-    for(j=0;j<N;j++) {
+    for(j=0;j<=N;j++) {
       glVertex3f(r1*cos(phi), z1, r1*sin(phi));
       glVertex3f(r2*cos(phi), z2, r2*sin(phi));
       phi += dphi;
@@ -306,17 +306,17 @@ void display()
     case DRAW_LINE: {
       draw_shapesurf(item->major_radius, item->minor_radius,
 		     item->elongation, item->triangularity, 
-		     item->m, item->n, &item->color, item->N);
+		     item->m, item->n, &item->color, item->number);
       break;
     };
     case DRAW_SOLID: {
       solid_surface( item->major_radius, item->minor_radius, 
 		     item->elongation, item->triangularity,
-		     item->N, &item->color, item->phi0, item->phi1);
+		     item->number, &item->color, item->phi0, item->phi1);
       break;
     }
     case DRAW_PLANES: {
-      draw_planes(item->N, item->major_radius, item->minor_radius, &item->color);
+      draw_planes(item->number, item->major_radius, item->minor_radius, &item->color);
       break;
     }
     default: {
@@ -324,113 +324,6 @@ void display()
     }
     };
   }
-
-  linecolor.r = 0.5;
-  linecolor.g = 0.5;
-  linecolor.b = 0.5;
-  linecolor.alpha = 1.0;
-
-
-
-  //void draw_shapesurf(float R, float a, float e, float k, int m, int n, TColor *color, int N);
-  
-  //draw_shapesurf(3.0, 0.6, 0.0,0.0, 1, 2, &linecolor, 10);
-  
-  //void solid_surface(float R, float a, float e, float k, int N, TColor *color, float phi0, float phi1);
-  solid_surface( 3.0, 0.8, 0.0, 0.0, 100, &linecolor, 0.0, 3.*PI/2.);
-
-  linecolor.r = 0.7;
-  linecolor.g = 0.7;
-  linecolor.b = 0.7;
-  linecolor.alpha = 1.0;
-
-  solid_surface( 3.0, 0.6, 0.0, 0.0, 100, &linecolor, 0.0, 3.*PI/2.);
-
-  linecolor.r = 0;
-  linecolor.g = 0;
-  linecolor.b = 0;
-  linecolor.alpha = 1.0;
-  
-  solid_surface( 3.0, 0.7, 0.0, 0.0, 100, &linecolor, 0.0, 3.*PI/2.);
-
-  glLineWidth(2.);
-
-  linecolor.r = 0.0;
-  linecolor.g = 0.0;
-  linecolor.b = 0.0;
-  linecolor.alpha = 1.0;
-  draw_shapesurf(3.0, 0.90, 0.0, 0.0, 1, 3, &linecolor, 5);
-
-  /*
-  p0 = 0.0;
-  dp = PI / 10;
-
-  linecolor.r = 0.0;
-  linecolor.g = 0.0;
-  linecolor.b = 0.0;
-  linecolor.alpha = 1.0;
-  
-  //draw_surface(2.0, 1.0, 0.0, 0.0, 5, 0.0);
-  
-  //q = 3
-
-  theta = 0.0; phi = p0 - dp;
-  draw_line(3.0, 3.0, 0.5, &theta, &phi, 100, &linecolor, 0.0);
-  
-  theta = 0.0; phi = p0 + dp;
-  draw_line(3.0, 3.0, 0.5, &theta, &phi, 100, &linecolor, 0.0);
-
-  linecolor.r = 0.7;
-  linecolor.g = 0.7;
-  linecolor.b = 0.7;
-  linecolor.alpha = 1.0;
-
-  // q = 5
-
-  theta = 0.0; phi = p0 - dp;
-  draw_line(5.0, 3.0, 0.75, &theta, &phi, 100, &linecolor, 0.0);
-  
-  theta = 0.0; phi = p0 + dp;
-  draw_line(5.0, 3.0, 0.75, &theta, &phi, 100, &linecolor, 0.0);
-  
-  linecolor.r = 0.5;
-  linecolor.g = 0.5;
-  linecolor.b = 0.5;
-  linecolor.alpha = 0.5;
-
-  draw_planes(5, 3.0, 1.0, &linecolor);
-  */
-
-  /*
-  //draw_planes(5, 1.0, 1.0, &planecolor);
-
-  linecolor.r = 0.7;
-  linecolor.g = 0.0;
-  linecolor.b = 0.0;
-
-  //draw_surface(3, 2, 1.0, 0.2, 20, 0.0);
-  
-  linecolor.r = 0.0;
-  linecolor.g = 0.7;
-  linecolor.b = 0.0;
-  
-  //draw_surface(4, 1, 1.0, 0.3, 10, 0.0);
-  //draw_shapesurf(1.0, 0.80, 1.0, 2.0, 2, 5, &linecolor, 100);
-  //solid_surface(1.0, 0.8, 1.0, 2.0, 100, &linecolor, 0.0, 2.0*PI);
-
-  linecolor.r = 0.0;
-  linecolor.g = 0.0;
-  linecolor.b = 0.7;
-
-  //theta = phi = 0.0;
-  //draw_line(6.5, 1.0, 0.45, &theta, &phi, 100, &linecolor);
-  //draw_surface(13,2, 1.0, 0.45, 5, 0.0);
-
-  //draw_shapeline(1.0, 0.3, 0.5, 0.5, 1, 2, 100, &linecolor,0.0);
-
-  //draw_shapesurf(4.0, 1.0, 0.0, 0.0, 2, 7, &linecolor, 5);
-  draw_shapesurf(1.0, 0.95, 1.0, 4.0, 2, 7, &linecolor, 5);
-  */
   
   /* Finish drawing */
 
@@ -471,6 +364,8 @@ int main(int argc, char **argv)
 
   /* Clear the model */
   drawmodel.nitems = 0;
+
+  model_load(&drawmodel, "example.def");
 
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
@@ -743,17 +638,17 @@ void keyboard (unsigned char key, int x, int y)
   case 'h': { // help
     printf("\nCommands:\n");
     printf("  Move around with arrow keys\n");
-    printf("  F1  - arrow keys rotate object\n");
-    printf("  F2  - arrow keys move focus\n");
-    printf("  ESC - exit\n");
-    printf("  c   - centre camera on origin\n");
-    printf("  C   - reset camera\n");
-    printf("  x   - zoom out\n");
-    printf("  z   - zoom in\n");
-    printf("  b   - flup background color\n");
-    printf("  a   - enable/disable transparency\n");
-    printf("  f   - change output format\n");
-    printf("  p   - print the current view to file\n\n");
+    printf("  F1       - arrow keys rotate object\n");
+    printf("  F2       - arrow keys move focus\n");
+    printf("  ESC or q - exit\n");
+    printf("  c        - centre camera on origin\n");
+    printf("  C        - reset camera\n");
+    printf("  x or -   - zoom out\n");
+    printf("  z or +   - zoom in\n");
+    printf("  b        - flip background color\n");
+    printf("  a        - enable/disable transparency\n");
+    printf("  f        - change output format\n");
+    printf("  p        - print the current view to file\n\n");
     break;
   }
   };

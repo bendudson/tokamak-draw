@@ -17,7 +17,7 @@ typedef struct {
   float elongation; 
   float triangularity;
   
-  int N;
+  int number;
   TColor color;
   
   int m, n;         /* Only used for field-lines */
