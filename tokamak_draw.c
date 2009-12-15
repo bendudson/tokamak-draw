@@ -1,9 +1,16 @@
-/************************************************
+/*******************************************************
  * Draw surfaces and field-lines in a tokamak
  * Intended for drawing diagrams for presentation
- * Most code adapted from bout camera
- * At the moment just a toy for demonstration
- ************************************************/
+ * 
+ * Changelog:
+ *
+ *   Feb 2006: Ben Dudson, University of Oxford/UKAEA
+ *             Adapted from bout_camera routines
+ *
+ *   Dec 2009: Ben Dudson, University of York
+ *             Added scripting code
+ * 
+ ********************************************************/
 
 #include <GL/glut.h>
 
@@ -373,7 +380,7 @@ int main(int argc, char **argv)
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
   glutInitWindowSize (640, 640);
-  glutCreateWindow ("PIXIE draw");
+  glutCreateWindow ("Tokamak draw");
   init();
   glutReshapeFunc(reshape);
   glutKeyboardFunc(keyboard);
