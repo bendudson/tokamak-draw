@@ -15,27 +15,8 @@
 
 #include "gl2ps.h"
 
-/************* DEFINITIONS *************/
-
-#define PI 3.141592653589793
-
-/* Structure storing a viewpoint */
-typedef struct {
-  /* POSITION OF CAMERA - SPHERICAL COORDS */
-  double theta;   /* Angle of rotation around y axis  (toroidal angle) 0 -> 2pi*/
-  double R;       /* Major radius */
-  double phi;     /* Poloidal angle -pi/2 -> pi/2 */
-
-  double x, y, z;  /* Location the camera is looking at */
-
-  double cx, cy, cz; /* Camera location in cartesian coords
-			(updated AFTER camera moved) */
-}TCamera;
-
-typedef struct {
-  float r, g, b;
-  float alpha;
-}TColor;
+#include "model.h"
+#include "tokamak_draw.h"
 
 /*********** GLOBALS *****************/
 
@@ -43,6 +24,8 @@ TCamera *dispview;
 int win_width, win_height;
 
 TColor planecolor, linecolor;
+
+TModel drawmodel; /* The model being used */
 
 /*********** PROTOTYPES ****************/
 
@@ -181,7 +164,7 @@ void solid_surface(float R, float a, float e, float k, int N, TColor *color, flo
   float dphi, phi;
   float theta, dtheta;
   float b;
-  float r1, z1, x1, y1, r2, z2, x2, y2;
+  float r1, z1, r2, z2;
   float ct;
 
   b = a*( 2.0/(2.0 + k) - 1.0 );
@@ -305,42 +288,10 @@ void draw_surface(int n, int m, float major, float minor, int M, float mode)
  * won't look quite right.
  *****************************************************************/
 
-enum DrawType {DRAW_LINE, DRAW_SOLID, DRAW_PLANES};
-
-typedef struct {
-  enum DrawType type; 
-  
-  float major_radius;
-  float minor_radius;
-  float elongation; 
-  float triangularity;
-  
-  int N;
-  TColor color;
-  
-  int m, n;         /* Only used for field-lines */
-  float phi0, phi1; /* Only for solid surfaces */
-  
-}TModelItem;
-
-typedef struct {
-  int nitems;
-  TModelItem *item; /* Array of items (surfaces etc.) to plot */
-}TModel;
-
-
-
-
-TModel drawmodel; /* The model being used */
-
-/************************* MAIN DRAWING ROUTINE ******************/
-
 void display()
 {
   int i;
   TModelItem *item;
-  float theta, phi;
-  float p0, dp;
 
   glPushMatrix();
 
