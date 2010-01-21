@@ -35,4 +35,6 @@ int model_save(TModel *model, char *filename);
 
 void model_free(TModel *model);
 
+void model_write_example();
+
 #endif /* __MODEL_H__ */

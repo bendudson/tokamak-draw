@@ -1,0 +1,11 @@
+2010-01-21  ben dudson  <bd512@york.ac.uk>
+
+	* Added GNU automake/autoconf build method
+
+2009-12-01  ben dudson  <bd512@york.ac.uk>
+
+	* Added scripting code
+
+2006-02-01  ben dudson  <bd512@york.ac.uk>
+
+	* Adapted from bout_camera routines

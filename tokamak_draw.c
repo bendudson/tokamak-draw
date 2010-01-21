@@ -1,7 +1,30 @@
 /*******************************************************
+ *                 Tokamak draw
  * Draw surfaces and field-lines in a tokamak
  * Intended for drawing diagrams for presentation
- * 
+ *
+ * MIT LICENSE:
+ *
+ * Copyright (c) 2006-2008 B.Dudson, University of Oxford and UKAEA Fusion
+ * Copyright (c) 2009-2010 B.Dudson, University of York
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the Software
+ * is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
  * Changelog:
  *
  *   Feb 2006: Ben Dudson, University of Oxford/UKAEA
@@ -10,6 +33,9 @@
  *   Dec 2009: Ben Dudson, University of York
  *             Added scripting code
  * 
+ *   Jan 2010: Ben Dudson, University of York
+ *             Added GNU automake/autoconf build method
+ *             
  ********************************************************/
 
 #include <GL/glut.h>
@@ -359,6 +385,10 @@ void init()
 
 int main(int argc, char **argv)
 {
+  printf("\n     Tokamak draw version %s\n", VERSION);
+  printf("Ben Dudson, University of York <bd512@york.ac.uk>\n\n");
+  
+
   /* Create the camera */
   dispview = create_camera();
 
@@ -371,11 +401,19 @@ int main(int argc, char **argv)
   drawmodel.nitems = 0;
   
   if(argc > 1) {
-    /* First argument is a model to load */
-    strncpy(modelfile, argv[1], 255);
+    if(strcasecmp(argv[1], "example") == 0) {
+      // Generate the input file
+      model_write_example();
+      strncpy(modelfile, "example.def", 255);
+    }else {
+      /* First argument is a model to load */
+      strncpy(modelfile, argv[1], 255);
+    }
   }else 
     strncpy(modelfile, "example.def", 255);
-  model_load(&drawmodel, modelfile);
+  if(model_load(&drawmodel, modelfile)) {
+    fprintf(stderr, "Run '%s example' to generate an example input file 'example.def'\n", argv[0]);
+  }
 
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);

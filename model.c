@@ -1,4 +1,27 @@
 
+/*************************************************************************************
+ * model.c: Code to load drawing models from file.
+ *
+ * Copyright (c) 2009 B.Dudson, University of York <bd512@york.ac.uk>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the Software
+ * is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+ * PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ *************************************************************************************/
 #include "model.h"
 
 #include <stdio.h>
@@ -415,3 +438,94 @@ void model_free(TModel *model)
   model->nitems = 0;
 }
 
+
+/* Create an example model file */
+
+char model_example[] = "# Example model definition \n\
+# \n\
+# Syntax: \n\
+#  name <decription>   (optional) \n\
+#  <Default settings> \n\
+#\n\
+#  <item>\n\
+#     <settings>\n\
+#  <item>\n\
+#     <settings>\n\
+#    ...\n\
+#\n\
+# Settings can be any of\n\
+#   ALPHA <number> Transparency\n\
+#   COLOR <name or 3 numbers between 0 and 1> \n\
+#      e.g. \"COLOR blue\" or \"COLOR 0.0 0.0 1.0\"\n\
+#   ELONGATION <number>\n\
+#   MAJOR <number>   - Major radius\n\
+#   MINOR <number>   - Minor radius\n\
+#   NUMBER <integer>  Number of field-lines, or resolution\n\
+#   PITCH <integer m> <integer n> Field-line pitch\n\
+#   RANGE <start and end angles>\n\
+#      e.g. \"RANGE 0 90\"\n\
+#   TRIANGULARITY <number>\n\
+#   \n\
+# These can be abbreviated so long as they're not ambiguous\n\
+# so you could use \"C\", \"E\", \"MA\", \"MI\", \"N\", \"P\", \"R\", \"T\"\n\
+# but that's not recommended for clarity\n\
+#\n\
+# Numbers can be specified either as an absolute value,\n\
+# or relative to the defaults. e.g. You could specify\n\
+# \"ELONGATION 0.2\" to set to 0.2, or \"+0.1\" to set to\n\
+# the default value + 0.1.\n\
+#\n\
+# NOTE: Not case sensitive, indentation optional, and\n\
+#       hash starts a comment.\n\
+#\n\
+\n\
+NAME Example model\n\
+\n\
+# Default settings here before any items\n\
+\n\
+MAJOR 2.0\n\
+MINOR 1.0\n\
+ELONGATION 0.5\n\
+TRIANGULARITY 1.5\n\
+\n\
+# Items to plot: Solid surfaces (SOLID), field-lines (LINES)\n\
+# or poloidal planes (PLANES)\n\
+\n\
+SOLID\n\
+	NUMBER 30    # Number of segments\n\
+	COLOR red    # Either a name, or R,G,B\n\
+	RANGE 0 216  # Range of angle (degrees)\n\
+	ALPHA 0.5    # Transparency: 0 (invisible) to 1 (solid)\n\
+LINES\n\
+	COLOR 0 0 1  # R G B components (0 to 1)\n\
+	NUMBER 10    # Number of field-lines\n\
+	PITCH 1 3    # Specify m n numbers";
+
+void model_write_example()
+{
+  FILE *fp;
+  char buffer[20];
+
+  /* Check if the file exists by trying to read it */
+  if((fp = fopen("example.def", "r")) != NULL) {
+    fclose(fp);
+    
+    do {
+      printf("Warning: example.def already exists. Overwrite? [y/n]");
+      fgets(buffer, 20, stdin);
+      if(buffer[0] == 'n' || buffer[0] == 'N')
+	return;
+    }while((buffer[0] != 'y') || (buffer[0] != 'Y'));
+  }
+
+  /* Open the example file for writing */
+  if((fp = fopen("example.def", "w")) == NULL) {
+    fprintf(stderr, "Error: Couldn't open example.def for writing\n");
+    return;
+  }
+  
+  /* Write the example string */
+  fprintf(fp, "%s", model_example);
+  
+  fclose(fp);
+}

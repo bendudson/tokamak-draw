@@ -1,0 +1,28 @@
+
+Requirements
+============
+
+You need to have the OpenGL Utility Toolkit (GLUT) installed.
+This should be available in your standard package repository.
+
+
+Installing
+==========
+
+To compile tokamak_draw:
+
+./configure
+make
+
+Then optionally:
+
+make install
+
+By default, make install will put tokamak_draw in /usr/local/bin
+but to change this use the --prefix configure option e.g.:
+
+./configure --prefix=$HOME/local/
+
+For other configuration options run
+
+./configure --help

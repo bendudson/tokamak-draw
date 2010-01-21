@@ -1,0 +1,25 @@
+Tokamak draw
+============
+
+A fairly simple OpenGL code for drawing toroidal surfaces, field-lines etc. 
+
+To generate an example input file, run
+
+$ tokamak_draw example
+
+This will produce a file 'example.def', which defines a model to draw.
+The syntax of this file is quite simple, and by changing this you
+can specify different models to draw.
+
+Just running without any arguments
+
+$ tokamak_draw
+
+will try to read from 'example.def', but you can specify a different file
+to read as the first argument e.g:
+
+$ tokamak_draw my_model.def
+
+When viewing a model, pressing 'h' or '?' gives a list of commands.
+Pressing 'q' or ESC exits.
+

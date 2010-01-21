@@ -25,4 +25,8 @@ typedef struct {
   float alpha;
 }TColor;
 
+#ifndef VERSION
+#define VERSION "1.0"
+#endif
+
 #endif /* __TOKAMAK_DRAW_H__ */
