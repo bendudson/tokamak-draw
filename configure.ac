@@ -19,6 +19,13 @@ AC_CHECK_LIB([glut], [glutInit], , [
    exit
 ])
 
+AC_CHECK_LIB([GLU], [gluLookAt], , [
+   # Glut not found
+   echo "ERROR: GL library required"
+   echo "    Make sure it's in your LD_LIBRARY_PATH"
+   exit
+])
+
 ######### Headers
 
 AC_CHECK_HEADERS([GL/glut.h ctype.h sys/types.h stdarg.h time.h float.h], , [
